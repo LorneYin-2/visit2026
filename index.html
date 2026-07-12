@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>走访活动报名 - 2026年第六期专精特新企业培训班</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: #e8ecf1;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .page {
+    width: 100%;
+    max-width: 480px;
+    background: #fff;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  /* ---- 顶部装饰条 ---- */
+  .top-ribbon {
+    height: 5px;
+    background: linear-gradient(90deg, #1B2A4A, #2C5F8A, #C5A55A, #1B2A4A);
+  }
+
+  /* ---- 头部 ---- */
+  .header {
+    background: linear-gradient(180deg, #1B2A4A 0%, #152240 100%);
+    padding: 32px 24px 28px;
+    text-align: center;
+    position: relative;
+  }
+
+  .header .badge {
+    display: inline-block;
+    border: 1px solid #C5A55A;
+    color: #C5A55A;
+    font-size: 12px;
+    letter-spacing: 3px;
+    padding: 4px 18px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
+
+  .header h1 {
+    color: #fff;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.5;
+    letter-spacing: 1px;
+  }
+
+  .header .sub {
+    color: rgba(255,255,255,0.65);
+    font-size: 13px;
+    margin-top: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ---- 活动信息卡片 ---- */
+  .event-card {
+    margin: -16px 20px 0;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    padding: 20px 20px 16px;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 0;
+  }
+
+  .event-item {
+    display: flex;
+    align-items: flex-start;
+    width: 50%;
+    font-size: 13px;
+    color: #555;
+    line-height: 1.6;
+  }
+
+  .event-item.full {
+    width: 100%;
+  }
+
+  .event-item .e-icon {
+    width: 20px;
+    flex-shrink: 0;
+    margin-right: 6px;
+    color: #C5A55A;
+    font-size: 14px;
+  }
+
+  .event-item strong {
+    color: #1B2A4A;
+  }
+
+  /* ---- 表单区域 ---- */
+  .form-section {
+    padding: 28px 20px;
+  }
+
+  .form-section h2 {
+    font-size: 17px;
+    color: #1B2A4A;
+    margin-bottom: 20px;
+    padding-left: 12px;
+    border-left: 3px solid #C5A55A;
+    letter-spacing: 1px;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  .form-group label .required {
+    color: #e74c3c;
+    margin-left: 2px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 15px;
+    color: #333;
+    background: #fafbfc;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: #2C5F8A;
+    box-shadow: 0 0 0 3px rgba(44,95,138,0.1);
+    background: #fff;
+  }
+
+  .form-group input::placeholder,
+  .form-group textarea::placeholder {
+    color: #bbb;
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  .form-group select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+  }
+
+  .form-group .error-msg {
+    font-size: 12px;
+    color: #e74c3c;
+    margin-top: 4px;
+    display: none;
+  }
+
+  .form-group.error input,
+  .form-group.error select {
+    border-color: #e74c3c;
+  }
+
+  .form-group.error .error-msg {
+    display: block;
+  }
+
+  /* ---- 提交按钮 ---- */
+  .submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #1B2A4A 0%, #2C5F8A 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    font-family: inherit;
+  }
+
+  .submit-btn:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+  }
+
+  .submit-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+
+  /* ---- 成功页面 ---- */
+  .success-page {
+    display: none;
+    padding: 40px 20px;
+    text-align: center;
+  }
+
+  .success-page .check {
+    width: 72px;
+    height: 72px;
+    background: #27ae60;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 36px;
+    color: #fff;
+  }
+
+  .success-page h2 {
+    font-size: 20px;
+    color: #1B2A4A;
+    margin-bottom: 8px;
+  }
+
+  .success-page .msg {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 24px;
+    line-height: 1.8;
+  }
+
+  .success-page .reminder {
+    background: #f8f9fb;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: left;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: #555;
+    line-height: 1.8;
+  }
+
+  .success-page .reminder strong {
+    color: #1B2A4A;
+  }
+
+  /* ---- 底部 ---- */
+  .footer {
+    padding: 20px;
+    text-align: center;
+    font-size: 12px;
+    color: #aaa;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  .footer span {
+    color: #C5A55A;
+  }
+
+  /* ---- 提示弹窗 ---- */
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+
+  .toast.show {
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="top-ribbon"></div>
+
+  <!-- 头部 -->
+  <div class="header">
+    <div class="badge">专 精 特 新</div>
+    <h1>2026年第六期<br>专精特新企业培训班<br>同窗走访交流</h1>
+    <div class="sub">主办：北京新成科技有限公司</div>
+  </div>
+
+  <!-- 活动信息卡 -->
+  <div class="event-card">
+    <div class="event-item">
+      <span class="e-icon">&#128197;</span>
+      <span><strong>2026年7月21日</strong>（周二）<br>13:00 - 21:00</span>
+    </div>
+    <div class="event-item">
+      <span class="e-icon">&#128205;</span>
+      <span>北京经济技术开发区<br>科创十三街12号院2号楼</span>
+    </div>
+    <div class="event-item full">
+      <span class="e-icon">&#128222;</span>
+      <span>联系人：尹龙 &nbsp;17600712788</span>
+    </div>
+  </div>
+
+  <!-- 报名表单 -->
+  <div class="form-section" id="formSection">
+    <h2>在线报名</h2>
+
+    <div class="form-group" id="group-name">
+      <label>姓名 <span class="required">*</span></label>
+      <input type="text" id="name" placeholder="请输入您的姓名" maxlength="20">
+      <div class="error-msg">请填写姓名</div>
+    </div>
+
+    <div class="form-group" id="group-company">
+      <label>企业名称 <span class="required">*</span></label>
+      <input type="text" id="company" placeholder="请输入您的企业全称" maxlength="50">
+      <div class="error-msg">请填写企业名称</div>
+    </div>
+
+    <div class="form-group" id="group-title">
+      <label>职务 <span class="required">*</span></label>
+      <input type="text" id="title" placeholder="如：总经理、技术总监等" maxlength="30">
+      <div class="error-msg">请填写职务</div>
+    </div>
+
+    <div class="form-group" id="group-phone">
+      <label>手机号 <span class="required">*</span></label>
+      <input type="tel" id="phone" placeholder="请输入手机号" maxlength="11">
+      <div class="error-msg">请填写正确的手机号</div>
+    </div>
+
+    <div class="form-group">
+      <label>微信号</label>
+      <input type="text" id="wechat" placeholder="选填，方便后续建群联系" maxlength="30">
+    </div>
+
+    <div class="form-group" id="group-dinner">
+      <label>是否参加晚宴 <span class="required">*</span></label>
+      <select id="dinner">
+        <option value="">请选择</option>
+        <option value="参加">参加晚宴</option>
+        <option value="不参加">不参加晚宴</option>
+      </select>
+      <div class="error-msg">请选择是否参加晚宴</div>
+    </div>
+
+    <div class="form-group">
+      <label>特殊需求 / 备注</label>
+      <textarea id="remark" placeholder="如有饮食禁忌、行程安排等特殊需求请在此说明" maxlength="200"></textarea>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="submitForm()">提 交 报 名</button>
+  </div>
+
+  <!-- 报名成功 -->
+  <div class="success-page" id="successPage">
+    <div class="check">&#10003;</div>
+    <h2>报名成功</h2>
+    <div class="msg">感谢您的报名，期待与您相聚！</div>
+    <div class="reminder">
+      <strong>&#128204; 活动提醒</strong><br><br>
+      <strong>时间：</strong>2026年7月21日（周二）13:00-21:00<br>
+      <strong>地点：</strong>北京经济技术开发区科创十三街12号院2号楼<br>
+      <strong>联系人：</strong>尹龙 17600712788<br>
+      <strong>费用：</strong>场地、物料、接待、晚宴由主办方承担<br>
+      &emsp;&emsp;&emsp;交通费由参会嘉宾自理
+    </div>
+    <div class="msg" style="font-size:12px;">
+      如有行程变动，请随时联系尹龙<br>
+      17600712788（微信同号）
+    </div>
+  </div>
+
+  <!-- 底部 -->
+  <div class="footer">
+    北京新成科技有限公司 &nbsp;<span>&#9670;</span>&nbsp; 专精特新 &#183; 实业深耕
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  function $(id) { return document.getElementById(id); }
+
+  function showToast(msg, duration) {
+    duration = duration || 2000;
+    var t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, duration);
+  }
+
+  function validate() {
+    var valid = true;
+    var name = $('name').value.trim();
+    var company = $('company').value.trim();
+    var title = $('title').value.trim();
+    var phone = $('phone').value.trim();
+    var dinner = $('dinner').value;
+
+    // 重置
+    document.querySelectorAll('.form-group').forEach(function(g) { g.classList.remove('error'); });
+
+    if (!name) { $('group-name').classList.add('error'); valid = false; }
+    if (!company) { $('group-company').classList.add('error'); valid = false; }
+    if (!title) { $('group-title').classList.add('error'); valid = false; }
+    if (!phone || !/^1[3-9]\d{9}$/.test(phone)) { $('group-phone').classList.add('error'); valid = false; }
+    if (!dinner) { $('group-dinner').classList.add('error'); valid = false; }
+
+    return valid;
+  }
+
+  function submitForm() {
+    if (!validate()) {
+      showToast('请完善必填信息后再提交');
+      return;
+    }
+
+    var btn = $('submitBtn');
+    btn.disabled = true;
+    btn.textContent = '提交中...';
+
+    // 模拟提交
+    setTimeout(function() {
+      // 收集数据（前端展示用）
+      var data = {
+        name: $('name').value.trim(),
+        company: $('company').value.trim(),
+        title: $('title').value.trim(),
+        phone: $('phone').value.trim(),
+        wechat: $('wechat').value.trim(),
+        dinner: $('dinner').value,
+        remark: $('remark').value.trim()
+      };
+
+      console.log('报名数据：', data);
+
+      // 切换到成功页面
+      $('formSection').style.display = 'none';
+      $('successPage').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      btn.disabled = false;
+      btn.textContent = '提 交 报 名';
+    }, 600);
+  }
+
+  // 输入时清除错误状态
+  document.querySelectorAll('input, select').forEach(function(el) {
+    el.addEventListener('input', function() {
+      var group = this.closest('.form-group');
+      if (group) { group.classList.remove('error'); }
+    });
+  });
+</script>
+</body>
+</html>
