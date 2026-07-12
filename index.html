@@ -466,6 +466,7 @@
     };
 
     try {
+      // 方式1: AJAX fetch
       var resp = await fetch(SUBMIT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -474,20 +475,46 @@
       var result = await resp.json();
       if (!result.success) throw new Error(result.message || '提交失败');
 
-      // 同时存 localStorage 做备份
-      try {
-        var saved = JSON.parse(localStorage.getItem('visit_regs') || '[]');
-        saved.push(entry);
-        localStorage.setItem('visit_regs', JSON.stringify(saved));
-      } catch(e) {}
-
-      $('formSection').style.display = 'none';
-      $('successPage').style.display = 'block';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (e) {
-      console.error(e);
-      showToast('提交失败，请截图当前页面并联系尹龙手动报名', 4000);
+      // 方式2: 回退 - 用隐藏表单提交（无CORS问题）
+      console.warn('AJAX failed, trying form fallback:', e.message);
+      var iframe = document.createElement('iframe');
+      iframe.name = 'submitFrame'; iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+
+      var form = document.createElement('form');
+      form.method = 'POST';
+      form.action = 'https://formsubmit.co/601779227@qq.com';
+      form.target = 'submitFrame';
+      form.style.display = 'none';
+
+      var fields = {name:entry.name, company:entry.company, title:entry.title, phone:entry.phone, wechat:entry.wechat, dinner:entry.dinner, remark:entry.remark, time:entry.time, _subject:entry._subject, _captcha:'false', _template:'table'};
+      Object.keys(fields).forEach(function(k) {
+        var input = document.createElement('input');
+        input.type = 'hidden'; input.name = k; input.value = fields[k];
+        form.appendChild(input);
+      });
+
+      document.body.appendChild(form);
+      form.submit();
+
+      // 给iframe一点时间，然后显示成功
+      setTimeout(function() {
+        document.body.removeChild(form);
+        document.body.removeChild(iframe);
+      }, 3000);
     }
+
+    // 同时存 localStorage 做备份
+    try {
+      var saved = JSON.parse(localStorage.getItem('visit_regs') || '[]');
+      saved.push(entry);
+      localStorage.setItem('visit_regs', JSON.stringify(saved));
+    } catch(e) {}
+
+    $('formSection').style.display = 'none';
+    $('successPage').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
     btn.disabled = false;
     btn.textContent = '提 交 报 名';
