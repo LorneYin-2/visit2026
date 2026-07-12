@@ -441,27 +441,7 @@
     return valid;
   }
 
-  var DATA_URL = 'https://jsonblob.com/api/jsonBlob/019f540b-f8ce-7ab1-b9d0-1e9caa288ffd';
-
-  async function saveToCloud(entry) {
-    // 1. 获取当前数据
-    var getResp = await fetch(DATA_URL);
-    if (!getResp.ok) throw new Error('network error');
-    var list = await getResp.json();
-    if (!Array.isArray(list)) list = [];
-
-    // 2. 追加新条目
-    list.push(entry);
-
-    // 3. 更新数据
-    var putResp = await fetch(DATA_URL, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(list)
-    });
-    if (!putResp.ok) throw new Error('submit error: ' + putResp.status);
-    return true;
-  }
+  var SUBMIT_URL = 'https://formsubmit.co/ajax/601779227@qq.com';
 
   async function submitForm() {
     if (!validate()) {
@@ -481,11 +461,26 @@
       wechat: $('wechat').value.trim() || '-',
       dinner: $('dinner').value,
       remark: $('remark').value.trim() || '-',
-      time: new Date().toLocaleString('zh-CN', {timeZone:'Asia/Shanghai'})
+      time: new Date().toLocaleString('zh-CN', {timeZone:'Asia/Shanghai'}),
+      _subject: '【走访报名】' + $('name').value.trim() + ' - ' + $('company').value.trim()
     };
 
     try {
-      await saveToCloud(entry);
+      var resp = await fetch(SUBMIT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(entry)
+      });
+      var result = await resp.json();
+      if (!result.success) throw new Error(result.message || '提交失败');
+
+      // 同时存 localStorage 做备份
+      try {
+        var saved = JSON.parse(localStorage.getItem('visit_regs') || '[]');
+        saved.push(entry);
+        localStorage.setItem('visit_regs', JSON.stringify(saved));
+      } catch(e) {}
+
       $('formSection').style.display = 'none';
       $('successPage').style.display = 'block';
       window.scrollTo({ top: 0, behavior: 'smooth' });
