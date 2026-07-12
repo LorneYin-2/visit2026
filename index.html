@@ -441,7 +441,29 @@
     return valid;
   }
 
-  function submitForm() {
+  var DATA_URL = 'https://jsonblob.com/api/jsonBlob/019f540b-f8ce-7ab1-b9d0-1e9caa288ffd';
+
+  async function saveToCloud(entry) {
+    // 1. 获取当前数据
+    var getResp = await fetch(DATA_URL);
+    if (!getResp.ok) throw new Error('network error');
+    var list = await getResp.json();
+    if (!Array.isArray(list)) list = [];
+
+    // 2. 追加新条目
+    list.push(entry);
+
+    // 3. 更新数据
+    var putResp = await fetch(DATA_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(list)
+    });
+    if (!putResp.ok) throw new Error('submit error: ' + putResp.status);
+    return true;
+  }
+
+  async function submitForm() {
     if (!validate()) {
       showToast('请完善必填信息后再提交');
       return;
@@ -451,29 +473,29 @@
     btn.disabled = true;
     btn.textContent = '提交中...';
 
-    // 模拟提交
-    setTimeout(function() {
-      // 收集数据（前端展示用）
-      var data = {
-        name: $('name').value.trim(),
-        company: $('company').value.trim(),
-        title: $('title').value.trim(),
-        phone: $('phone').value.trim(),
-        wechat: $('wechat').value.trim(),
-        dinner: $('dinner').value,
-        remark: $('remark').value.trim()
-      };
+    var entry = {
+      name: $('name').value.trim(),
+      company: $('company').value.trim(),
+      title: $('title').value.trim(),
+      phone: $('phone').value.trim(),
+      wechat: $('wechat').value.trim() || '-',
+      dinner: $('dinner').value,
+      remark: $('remark').value.trim() || '-',
+      time: new Date().toLocaleString('zh-CN', {timeZone:'Asia/Shanghai'})
+    };
 
-      console.log('报名数据：', data);
-
-      // 切换到成功页面
+    try {
+      await saveToCloud(entry);
       $('formSection').style.display = 'none';
       $('successPage').style.display = 'block';
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (e) {
+      console.error(e);
+      showToast('提交失败，请截图当前页面并联系尹龙手动报名', 4000);
+    }
 
-      btn.disabled = false;
-      btn.textContent = '提 交 报 名';
-    }, 600);
+    btn.disabled = false;
+    btn.textContent = '提 交 报 名';
   }
 
   // 输入时清除错误状态
