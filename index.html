@@ -451,20 +451,22 @@
     var getResp = await fetch(API_REPO, {
       headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json' }
     });
-    if (!getResp.ok) throw new Error('网络异常');
+    if (!getResp.ok) throw new Error('获取数据失败 HTTP ' + getResp.status);
     var file = await getResp.json();
-    var list = JSON.parse(atob(file.content));
+    var list;
+    try { list = JSON.parse(atob(file.content)); } catch(e) { list = []; }
+    if (!Array.isArray(list)) list = [];
     // 2. 追加
     list.push(entry);
     var json = JSON.stringify(list, null, 2);
-    // 3. 更新 (处理中文base64编码)
+    // 3. 更新
     var base64 = btoa(unescape(encodeURIComponent(json)));
     var putResp = await fetch(API_REPO, {
       method: 'PUT',
       headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: 'reg: ' + entry.name, content: base64, sha: file.sha })
     });
-    if (!putResp.ok) throw new Error('提交失败');
+    if (!putResp.ok) { var err = await putResp.json().catch(function(){return {};}); throw new Error('写入失败 HTTP ' + putResp.status + ' ' + (err.message || '')); }
     return true;
   }
 
@@ -489,7 +491,7 @@
       await saveToGitHub(entry);
     } catch (e) {
       console.error(e);
-      showToast('提交失败，请重试或联系尹龙手动报名', 4000);
+      showToast('提交失败: ' + (e.message || e.toString()), 6000);
       btn.disabled = false; btn.textContent = '提 交 报 名';
       return;
     }
