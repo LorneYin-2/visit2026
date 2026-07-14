@@ -457,11 +457,12 @@
     // 2. 追加
     list.push(entry);
     var json = JSON.stringify(list, null, 2);
-    // 3. 更新
+    // 3. 更新 (处理中文base64编码)
+    var base64 = btoa(unescape(encodeURIComponent(json)));
     var putResp = await fetch(API_REPO, {
       method: 'PUT',
       headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: entry.name + ' - ' + entry.company, content: btoa(json), sha: file.sha })
+      body: JSON.stringify({ message: 'reg: ' + entry.name, content: base64, sha: file.sha })
     });
     if (!putResp.ok) throw new Error('提交失败');
     return true;
